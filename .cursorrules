@@ -1,11 +1,10 @@
 Next.js App Router with React, Shadcn UI, Supabase, and Ethers.js
 1. File Structure:
-- Implement App Router structure with app/ directory
+- Implement App Router structure with src/ directory
 - Organize components in components/ directory
 - Create lib/ directory for utility functions and configurations
 - Separate Supabase and Ethers.js logic in respective directories
 - Use types/ directory for TypeScript definitions
-- Implement API routes in app/api directory
 
 2. React and TypeScript:
 - Use TypeScript for all components and utilities
@@ -51,3 +50,6 @@ Next.js App Router with React, Shadcn UI, Supabase, and Ethers.js
 
 9. Linting:
 - Follow best practices for linting and code formatting
+
+10. i18n:
+- only english for now
