@@ -1,0 +1,53 @@
+Next.js App Router with React, Shadcn UI, Supabase, and Ethers.js
+1. File Structure:
+- Implement App Router structure with app/ directory
+- Organize components in components/ directory
+- Create lib/ directory for utility functions and configurations
+- Separate Supabase and Ethers.js logic in respective directories
+- Use types/ directory for TypeScript definitions
+- Implement API routes in app/api directory
+
+2. React and TypeScript:
+- Use TypeScript for all components and utilities
+- Implement Server Components by default
+- Use 'use client' directive for interactive components
+- Follow ES6+ best practices and patterns
+
+3. Supabase Integration:
+- Configure Supabase client in a separate utility file
+- Implement Edge Functions for serverless operations
+- Use database queries in Server Components
+- Handle Supabase errors with proper error boundaries
+
+4. Ethers.js Integration:
+- Set up provider configurations for different networks
+- Create utility functions for governance data fetching
+- Implement network-specific API endpoints
+- Handle blockchain data caching strategies
+
+5. Data Fetching:
+- Use Server Components for blockchain data fetching
+- Implement Edge Functions for complex operations
+- Use React Query for client-side state management
+- Handle loading states with Suspense
+
+6. API Structure:
+- Create RESTful endpoints for governance data
+- Implement network-specific route handlers
+- Use proper error handling and status codes
+- Cache responses when appropriate
+
+7. State Management:
+- Use React Query for blockchain data
+- Implement context for network selection
+- Use local state for UI interactions
+- Handle loading and error states systematically
+
+8. UI Components:
+- Use Shadcn UI components for consistent styling
+- Implement responsive design with Tailwind CSS
+- Follow best practices for accessibility and user experience
+- use recharts for charts
+
+9. Linting:
+- Follow best practices for linting and code formatting
