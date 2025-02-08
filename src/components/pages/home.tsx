@@ -13,7 +13,7 @@ export function HomePage() {
       <div className="relative flex flex-col items-center justify-center min-h-screen z-10">
         {/* Ethereum logo with 3D rotation and link */}
         <div className="perspective-[1000px]">
-          <Link href="/ethereum">
+          <Link href="/solana">
             <motion.div
               className="relative w-32 h-32 mb-8 [transform-style:preserve-3d] cursor-pointer"
               animate={{ 
@@ -38,8 +38,8 @@ export function HomePage() {
               }}
             >
               <Image
-                src="/chains/ethereum.svg"
-                alt="Ethereum Governance"
+                src="/chains/solana.svg"
+                alt="Solana"
                 fill
                 className="object-contain"
               />
