@@ -22,6 +22,7 @@ import { PullRequestsSkeleton } from '@/components/skeletons/pull-requests-skele
 import Image from 'next/image'
 import Link from 'next/link'
 import { PullRequest } from '@/types/githubPullRequest'
+import { PaginatedPageProps } from '@/types/pageProps'
 
 async function PullRequestsList({ page }: { page: number }) {
   const { nodes: prs, totalCount } = await fetchGithubPullRequests(page);
@@ -156,13 +157,10 @@ async function PullRequestsList({ page }: { page: number }) {
 }
 
 export default async function PullRequestsPage({
-  searchParams,
-}: {
-  searchParams: { page?: string }
-}) {
-  // searchParams를 안전하게 처리
-  const pageParam = await Promise.resolve(searchParams.page);
-  const page = pageParam ? parseInt(pageParam) : 1;
+  searchParams
+}: PaginatedPageProps) {
+  const params = await searchParams
+  const page = params.page ? parseInt(params.page) : 1
 
   return (
     <div className="flex flex-col gap-6 p-6">
@@ -171,4 +169,4 @@ export default async function PullRequestsPage({
       </Suspense>
     </div>
   )
-} 
+}

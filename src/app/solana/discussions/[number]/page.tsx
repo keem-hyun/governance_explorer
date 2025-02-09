@@ -8,6 +8,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import { Comment } from '@/types/githubDiscussion'
+import { PageProps } from '@/types/pageProps'
 
 function CommentItem({ comment, isReply = false }: { comment: Comment, isReply?: boolean }) {
   return (
@@ -116,14 +117,12 @@ async function DiscussionDetail({ number }: { number: number }) {
   )
 }
 
-export default function DiscussionDetailPage({
-  params
-}: {
-  params: { number: string }
-}) {
+export default async function DiscussionDetailPage({ params }: PageProps) {
+  const { number } = await params
+
   return (
     <Suspense fallback={<DiscussionDetailSkeleton />}>
-      <DiscussionDetail number={parseInt(params.number)} />
+      <DiscussionDetail number={parseInt(number)} />
     </Suspense>
   )
 } 

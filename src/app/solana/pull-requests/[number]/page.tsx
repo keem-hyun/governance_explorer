@@ -9,6 +9,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import type { Comment, PullRequestDetail } from '@/types/githubPullRequest'
+import { PageProps } from '@/types/pageProps'
 
 async function PullRequestDetail({ number }: { number: number }) {
   const pr = await fetchGithubPullRequest(number) as PullRequestDetail;
@@ -109,14 +110,12 @@ async function PullRequestDetail({ number }: { number: number }) {
   )
 }
 
-export default function PullRequestPage({
-  params
-}: {
-  params: { number: string }
-}) {
+export default async function PullRequestPage({ params }: PageProps) {
+  const { number } = await params
+
   return (
     <Suspense fallback={<PullRequestDetailSkeleton />}>
-      <PullRequestDetail number={parseInt(params.number)} />
+      <PullRequestDetail number={parseInt(number)} />
     </Suspense>
   )
-} 
+}
