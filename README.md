@@ -1,1 +1,1 @@
-# onchain governance explorer - govscan
+# governance explorer - govscan
