@@ -49,7 +49,7 @@ export function HomePage() {
 
         <h1 className="text-6xl font-bold mb-4">GovScan</h1>
         <p className="text-xl text-muted-foreground text-center max-w-2xl">
-          Explore and analyze on-chain governance activities across multiple networks
+          Explore each chain&apos;s governance activities
         </p>
       </div>
     </div>
