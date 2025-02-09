@@ -20,9 +20,26 @@ export interface GithubDiscussion {
   }
 }
 
+export interface Comment {
+  id: string;
+  body: string;
+  createdAt: string;
+  author: {
+    login: string;
+    avatarUrl: string;
+  };
+  reactions: {
+    totalCount: number;
+  };
+  replies: {
+    nodes: Comment[];
+  };
+}
+
 export interface DiscussionNode {
   title: string;
   number: number;
+  body: string;
   author: {
     login: string;
     avatarUrl: string;
@@ -33,6 +50,7 @@ export interface DiscussionNode {
   };
   comments: {
     totalCount: number;
+    nodes: Comment[];
   };
   reactions: {
     totalCount: number;
