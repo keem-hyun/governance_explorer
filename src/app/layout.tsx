@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Governance Dashboard",
-  description: "Onchain Governance Platform Dashboard",
+  title: "Governance Explorer",
+  description: "Governance Explorer Platform",
 };
 
 export default function RootLayout({
