@@ -235,6 +235,8 @@ export async function fetchGithubPullRequest(number: number) {
           createdAt
           updatedAt
           body
+          headRefOid
+          baseRefOid
           author {
             login
             avatarUrl
@@ -260,11 +262,76 @@ export async function fetchGithubPullRequest(number: number) {
             }
             totalCount
           }
+          reviewThreads(first: 100) {
+            nodes {
+              id
+              path
+              line
+              originalLine
+              startLine
+              diffSide
+              comments(first: 100) {
+                nodes {
+                  id
+                  body
+                  createdAt
+                  author {
+                    login
+                    avatarUrl
+                  }
+                  replyTo {
+                    id
+                  }
+                  pullRequestReview {
+                    state
+                  }
+                }
+              }
+            }
+          }
+          reviews(first: 100) {
+            nodes {
+              id
+              body
+              state
+              createdAt
+              author {
+                login
+                avatarUrl
+              }
+              comments(first: 100) {
+                nodes {
+                  id
+                  body
+                  path
+                  position
+                  line
+                  originalLine
+                  createdAt
+                  author {
+                    login
+                    avatarUrl
+                  }
+                  replyTo {
+                    id
+                  }
+                  pullRequestReview {
+                    state
+                  }
+                }
+              }
+            }
+          }
           commits {
             totalCount
           }
-          files {
-            totalCount
+          files(first: 100) {
+            nodes {
+              path
+              additions
+              deletions
+              changeType
+            }
           }
           changedFiles
           additions
@@ -296,5 +363,72 @@ export async function fetchGithubPullRequest(number: number) {
   } catch (error) {
     console.error('GitHub API Error:', error);
     return null;
+  }
+}
+
+export async function fetchPullRequestDiff(number: number) {
+  try {
+    const response = await fetch(
+      `https://api.github.com/repos/solana-foundation/solana-improvement-documents/pulls/${number}/files`,
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+          'Accept': 'application/vnd.github.v3+json',
+        },
+        next: { revalidate: 3600 },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch PR diff');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('GitHub API Error:', error);
+    return [];
+  }
+}
+
+export async function fetchFileContent(path: string, ref: string) {
+  try {
+    // 1. 먼저 파일의 Git blob SHA를 가져옵니다
+    const query = `
+      query {
+        repository(owner: "solana-foundation", name: "solana-improvement-documents") {
+          object(expression: "${ref}:${path}") {
+            ... on Blob {
+              text
+            }
+          }
+        }
+      }
+    `;
+
+    const response = await fetch(`${process.env.GITHUB_API_URL}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch file content');
+    }
+
+    const json = await response.json();
+    
+    if (json.errors) {
+      console.error('GitHub API Errors:', json.errors);
+      throw new Error(json.errors[0]?.message || 'GitHub API Error');
+    }
+
+    return json.data.repository.object?.text || '';
+
+  } catch (error) {
+    console.error('GitHub API Error:', error);
+    return '';
   }
 }
