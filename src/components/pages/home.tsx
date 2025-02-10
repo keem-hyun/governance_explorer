@@ -11,7 +11,6 @@ export function HomePage() {
       
 
       <div className="relative flex flex-col items-center justify-center min-h-screen z-10">
-        {/* Ethereum logo with 3D rotation and link */}
         <div className="perspective-[1000px]">
           <Link href="/solana">
             <motion.div
@@ -49,7 +48,7 @@ export function HomePage() {
 
         <h1 className="text-6xl font-bold mb-4">GovScan</h1>
         <p className="text-xl text-muted-foreground text-center max-w-2xl">
-          Explore each chain&apos;s governance activities
+        Discover and track governance proposals across multiple blockchains
         </p>
       </div>
     </div>
