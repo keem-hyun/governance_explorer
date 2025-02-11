@@ -7,6 +7,9 @@ import { DiscussionsSkeleton } from '@/components/skeletons/discussion-skeleton'
 import Image from 'next/image'
 import Link from 'next/link'
 
+export const dynamic = 'force-static'
+export const revalidate = 3600
+
 function DiscussionItem({ discussion }: { discussion: DiscussionNode }) {
   return (
     <div className="border-b pb-4 hover:bg-muted/50 p-4 rounded-lg">

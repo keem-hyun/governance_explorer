@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from "@/components/ui/badge"
-import { fetchGithubDiscussion } from '@/util/useGithub'
+import { fetchGithubDiscussion, fetchGithubDiscussions } from '@/util/useGithub'
 import { DiscussionDetailSkeleton } from '@/components/skeletons/discussion-detail-skeleton'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
@@ -9,6 +9,17 @@ import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import { Comment } from '@/types/githubDiscussion'
 import { PageProps } from '@/types/pageProps'
+
+export const dynamic = 'force-static'
+export const revalidate = 3600
+
+// 정적 경로 생성
+export async function generateStaticParams() {
+  const discussions = await fetchGithubDiscussions()
+  return discussions.map((discussion) => ({
+    number: discussion.number.toString()
+  }))
+}
 
 function CommentItem({ comment, isReply = false }: { comment: Comment, isReply?: boolean }) {
   return (
