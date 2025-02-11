@@ -24,8 +24,7 @@ import Link from 'next/link'
 import { PullRequest } from '@/types/githubPullRequest'
 import { PaginatedPageProps } from '@/types/pageProps'
 
-export const dynamic = 'force-static'
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 async function PullRequestsList({ page }: { page: number }) {
   const { nodes: prs, totalCount } = await fetchGithubPullRequests(page);
@@ -102,54 +101,38 @@ async function PullRequestsList({ page }: { page: number }) {
           <Pagination>
             <PaginationContent>
               <PaginationItem>
-                <PaginationPrevious 
-                  href={`/solana/pull-requests?page=${page > 1 ? page - 1 : 1}`}
-                  className={page <= 1 ? 'pointer-events-none opacity-50' : ''}
-                />
+                <Link 
+                  href={`/solana/pull-requests?page=${Math.max(1, page - 1)}`}
+                  legacyBehavior
+                >
+                  <PaginationPrevious />
+                </Link>
               </PaginationItem>
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                let pageNum;
-                if (totalPages <= 5) {
-                  pageNum = i + 1;
-                } else if (page <= 3) {
-                  pageNum = i + 1;
-                } else if (page >= totalPages - 2) {
-                  pageNum = totalPages - 4 + i;
-                } else {
-                  pageNum = page - 2 + i;
-                }
-
-                if (pageNum > 0 && pageNum <= totalPages) {
-                  return (
-                    <PaginationItem key={pageNum}>
-                      <PaginationLink
-                        href={`/solana/pull-requests?page=${pageNum}`}
-                        isActive={pageNum === page}
-                      >
+              
+              {Array.from({ length: totalPages }, (_, i) => {
+                const pageNum = i + 1;
+                
+                return (
+                  <PaginationItem key={pageNum}>
+                    <Link 
+                      href={`/solana/pull-requests?page=${pageNum}`}
+                      legacyBehavior
+                    >
+                      <PaginationLink isActive={pageNum === page}>
                         {pageNum}
                       </PaginationLink>
-                    </PaginationItem>
-                  );
-                }
-                return null;
+                    </Link>
+                  </PaginationItem>
+                );
               })}
-              {totalPages > 5 && page < totalPages - 2 && (
-                <>
-                  <PaginationItem>
-                    <span className="px-2">...</span>
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink href={`/solana/pull-requests?page=${totalPages}`}>
-                      {totalPages}
-                    </PaginationLink>
-                  </PaginationItem>
-                </>
-              )}
+              
               <PaginationItem>
-                <PaginationNext 
-                  href={`/solana/pull-requests?page=${page < totalPages ? page + 1 : totalPages}`}
-                  className={page >= totalPages ? 'pointer-events-none opacity-50' : ''}
-                />
+                <Link 
+                  href={`/solana/pull-requests?page=${Math.min(totalPages, page + 1)}`}
+                  legacyBehavior
+                >
+                  <PaginationNext />
+                </Link>
               </PaginationItem>
             </PaginationContent>
           </Pagination>
