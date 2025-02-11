@@ -6,9 +6,9 @@ import { Card, CardContent } from "@/components/ui/card"
 import { ProposalDetailSkeleton } from '@/components/skeletons/proposal-skeleton'
 
 interface ProposalDetailProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 async function ProposalDetail({ id }: { id: string }) {
@@ -23,6 +23,11 @@ async function ProposalDetail({ id }: { id: string }) {
   const number = match?.[1] || ''
   const title = match?.[2]?.replace(/-/g, ' ') || proposal.name
 
+  const sanitizedContent = proposal.content
+    .replace(/@/g, '&#64;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+
   return (
     <div className="container py-8">
       <Card>
@@ -32,7 +37,7 @@ async function ProposalDetail({ id }: { id: string }) {
           </h1>
           
           <div className="prose prose-lg dark:prose-invert">
-            <Markdown>{proposal.content}</Markdown>
+            <Markdown>{sanitizedContent}</Markdown>
           </div>
         </CardContent>
       </Card>
@@ -40,11 +45,13 @@ async function ProposalDetail({ id }: { id: string }) {
   )
 }
 
-export default function ProposalPage({ params }: ProposalDetailProps) {
+export default async function ProposalPage({ params }: ProposalDetailProps) {
+  const resolvedParams = await params
+  
   return (
     <div className="flex flex-col gap-6 p-6">
       <Suspense fallback={<ProposalDetailSkeleton />}>
-        <ProposalDetail id={params.id} />
+        <ProposalDetail id={resolvedParams.id} />
       </Suspense>
     </div>
   )
