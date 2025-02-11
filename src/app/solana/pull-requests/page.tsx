@@ -24,6 +24,9 @@ import Link from 'next/link'
 import { PullRequest } from '@/types/githubPullRequest'
 import { PaginatedPageProps } from '@/types/pageProps'
 
+export const dynamic = 'force-static'
+export const revalidate = 3600
+
 async function PullRequestsList({ page }: { page: number }) {
   const { nodes: prs, totalCount } = await fetchGithubPullRequests(page);
   const totalPages = Math.ceil(totalCount / 10);

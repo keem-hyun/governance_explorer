@@ -1,4 +1,5 @@
 import { DiscussionNode } from "@/types/githubDiscussion";
+import { GitHubTreeEntry, GitHubProposal, GitHubTreeResponse } from "@/types/githubProposals";
 
 export async function fetchGithubDiscussions(): Promise<DiscussionNode[]> {
   const query = `
@@ -34,10 +35,13 @@ export async function fetchGithubDiscussions(): Promise<DiscussionNode[]> {
       headers: {
         'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
         'Content-Type': 'application/json',
-        'Accept': 'application/vnd.github.v3+json',
       },
       body: JSON.stringify({ query }),
-      next: { revalidate: 3600 }, // 1시간 캐시
+      cache: 'force-cache',
+      next: { 
+        revalidate: 3600,
+        tags: ['discussions']
+      }
     });
 
     const json = await response.json();
@@ -104,7 +108,11 @@ export async function fetchGithubDiscussion(number: number) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ query }),
-    next: { revalidate: 3600 }, // 1시간 캐시
+    cache: 'force-cache',
+    next: { 
+      revalidate: 3600,
+      tags: ['discussion', `discussion-${number}`]
+    }
   })
 
   const json = await response.json()
@@ -181,7 +189,11 @@ export async function fetchGithubPullRequests(page: number = 1) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ query }),
-      next: { revalidate: 3600 }, // cache 1 hour
+      cache: 'force-cache',
+      next: { 
+        revalidate: 3600,
+        tags: ['pull-requests', `pull-requests-page-${page}`]
+      }
     });
 
     const json = await response.json();
@@ -349,7 +361,11 @@ export async function fetchGithubPullRequest(number: number) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ query }),
-      next: { revalidate: 3600 },
+      cache: 'force-cache',
+      next: { 
+        revalidate: 3600,
+        tags: ['pull-request', `pull-request-${number}`]
+      }
     });
 
     const json = await response.json();
@@ -375,7 +391,11 @@ export async function fetchPullRequestDiff(number: number) {
           'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
           'Accept': 'application/vnd.github.v3+json',
         },
-        next: { revalidate: 3600 },
+        cache: 'force-cache',
+        next: { 
+          revalidate: 3600,
+          tags: ['pull-request-diff', `pull-request-diff-${number}`]
+        }
       }
     );
 
@@ -412,6 +432,11 @@ export async function fetchFileContent(path: string, ref: string) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ query }),
+      cache: 'force-cache',
+      next: { 
+        revalidate: 3600,
+        tags: ['file-content', `file-content-${path}-${ref}`]
+      }
     });
 
     if (!response.ok) {
@@ -430,5 +455,60 @@ export async function fetchFileContent(path: string, ref: string) {
   } catch (error) {
     console.error('GitHub API Error:', error);
     return '';
+  }
+}
+
+export async function fetchGithubProposals(): Promise<GitHubProposal[]> {
+  const query = `
+    query {
+      repository(owner: "solana-foundation", name: "solana-improvement-documents") {
+        object(expression: "main:proposals") {
+          ... on Tree {
+            entries {
+              name
+              type
+              object {
+                ... on Blob {
+                  text
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const response = await fetch(`${process.env.GITHUB_API_URL}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query }),
+      cache: 'force-cache',
+      next: { 
+        revalidate: 3600,
+        tags: ['proposals']
+      }
+    });
+
+    const json = await response.json() as GitHubTreeResponse;
+
+    if (json.errors) {
+      console.error('GitHub API Errors:', json.errors);
+      throw new Error(json.errors[0]?.message || 'GitHub API Error');
+    }
+
+    return json.data.repository.object.entries
+      .filter((entry: GitHubTreeEntry) => entry.name.endsWith('.md'))
+      .map((entry: GitHubTreeEntry) => ({
+        name: entry.name,
+        content: entry.object.text
+      }));
+  } catch (error) {
+    console.error('GitHub API Error:', error);
+    return [];
   }
 }
