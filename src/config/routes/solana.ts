@@ -15,4 +15,8 @@ export const solanaRoutes = [
     label: "Pull Requests",
     href: "/solana/pull-requests",
   },
+  {
+    label: "Proposals",
+    href: "/solana/proposals",
+  },
 ]
