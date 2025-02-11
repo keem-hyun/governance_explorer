@@ -2,14 +2,25 @@ import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from "@/components/ui/badge"
-import { fetchGithubPullRequest, fetchPullRequestDiff, fetchFileContent } from '@/util/useGithub'
+import { fetchGithubPullRequest, fetchPullRequestDiff, fetchFileContent, fetchGithubPullRequests } from '@/util/useGithub'
 import { PullRequestDetailSkeleton } from '@/components/skeletons/pull-request-detail-skeleton'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
-import type { Comment, PullRequestDetail, PullRequestFile, Review, ReviewThread } from '@/types/githubPullRequest'
+import type { Comment, PullRequestDetail, PullRequestFile, Review, ReviewThread, PullRequest } from '@/types/githubPullRequest'
 import { PageProps } from '@/types/pageProps'
+
+export const dynamic = 'force-static'
+export const revalidate = 3600
+
+// 정적 경로 생성
+export async function generateStaticParams() {
+  const { nodes: prs } = await fetchGithubPullRequests(1)
+  return prs.map((pr: PullRequest) => ({
+    number: pr.number.toString()
+  }))
+}
 
 async function PullRequestDetail({ params }: { params: { number: string } }) {
   const pr = await fetchGithubPullRequest(parseInt(params.number));
