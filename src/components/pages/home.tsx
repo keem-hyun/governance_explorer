@@ -47,9 +47,10 @@ export function HomePage() {
         </div>
 
         <h1 className="text-6xl font-bold mb-4">GovScan</h1>
-        <p className="text-xl text-muted-foreground text-center max-w-2xl">
-        Discover and track governance proposals across multiple blockchains
+        <p className="text-xl text-muted-foreground text-center max-w-2xl mb-8">
+          Discover and track governance proposals across multiple blockchains
         </p>
+
       </div>
     </div>
   )
